@@ -1,0 +1,31 @@
+require(sqldf)
+#read only required data
+epc_df=read.csv.sql("household_power_consumption.txt", sep = ";", sql="select * from file where Date in ('1/2/2007','2/2/2007')")
+epc_df$Date=strptime(epc_df$Date,"%d/%m/%Y")
+epc_df$DateTime=strptime(paste(epc_df$Date, epc_df$Time), "%Y-%m-%d %H:%M:%S")
+
+png("Plot1.png", width = 480, height = 480)
+hist(epc_df$Global_active_power, col="red", main = "Global Active Power", xlab = "Global Active Power(kilowatts)")
+dev.off()
+
+png("Plot2.png", width = 480, height = 480)
+plot(epc_df$DateTime, epc_df$Global_active_power, pch = 20, type="l", ylab = "Global Active Power(kilowatts)", xlab="", main="")
+dev.off()
+
+plot(epc_df$DateTime, epc_df$Sub_metering_1, type="n", yaxt="n", ylab="Energy sub metering", xlab="")
+axis(2,at=seq(0,30,10))
+lines(epc_df$DateTime, epc_df$Sub_metering_1)
+lines(epc_df$DateTime, epc_df$Sub_metering_2, col="red")
+lines(epc_df$DateTime, epc_df$Sub_metering_3, col="blue")
+legend("topright", legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), col=c("black","red","blue"), lty=rep(1,3), cex=0.8)
+
+par(mfrow=c(2,2))
+plot(epc_df$DateTime, epc_df$Global_active_power, pch = 20, type="l", ylab = "Global Active Power(kilowatts)", xlab="", main="")
+plot(epc_df$DateTime, epc_df$Voltage, pch=20, type="l", ylab = "Voltage", xlab = "datetime")
+plot(epc_df$DateTime, epc_df$Sub_metering_1, type="n", yaxt="n", ylab="Energy sub metering", xlab="")
+axis(2,at=seq(0,30,10))
+lines(epc_df$DateTime, epc_df$Sub_metering_1)
+lines(epc_df$DateTime, epc_df$Sub_metering_2, col="red")
+lines(epc_df$DateTime, epc_df$Sub_metering_3, col="blue")
+legend("topright", legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), col=c("black","red","blue"), lty=rep(1,3),cex=0.2)
+plot(epc_df$DateTime, epc_df$Global_reactive_power, pch=20, type="l", ylab = "Global_reactive_power", xlab ="datetime")
